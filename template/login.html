@@ -114,17 +114,13 @@
     <form action="/login" method="POST">
 
         <!-- Email & Password -->
-        <input type="email" name="email" placeholder="Enter email" required>
-        <input type="password" name="password" placeholder="Enter password" required>
+        <input type="email" name="email" placeholder="Enter email" required autocomplete="email">
+        <input type="password" name="password" placeholder="Enter password" required autocomplete="current-password">
 
         <!-- Role Selection -->
         <!-- Removed role selection buttons for login form to match backend flow -->
-        - 
-        <div class="role-box">
-            <button type="button" class="role-btn" onclick="selectRole('donor', this)">Donor</button>
-            <button type="button" class="role-btn" onclick="selectRole('volunteer', this)">Volunteer</button>
-            <button type="button" class="role-btn" onclick="selectRole('beneficiary', this)">Beneficiary</button>
-        </div>
+       
+       
 
         <input type="hidden" name="role" id="roleInput" required>
         

@@ -28,7 +28,7 @@ DB_PASS = "sagar123"
 DB_NAME = "ngo_management_system"
 
 # Firebase Web API Key (for REST signInWithPassword)
-FIREBASE_WEB_API_KEY = "AIzaSyAnJssmodtiYIfmmalhvtug7IjncXVedhI"  # <-- replace if needed
+FIREBASE_WEB_API_KEY = "AIzaSyBt_eZJYZ7YIbB12NBots-t5RpER5Zdl1E"  # <-- replace if needed
 
 # Uploaded image path (local)
 UPLOADED_IMAGE_PATH = "/mnt/data/6507ba89-768b-43e0-91fc-58d70aca4d08.png"
@@ -79,9 +79,9 @@ def get_db_connection():
 # -------------------------
 firestore_db = None
 try:
-    cred_path = "serviceAccountKey.json"
+    cred_path = "diems-cse-firebase-adminsdk-148re-9ffa77330c.json"
     if not os.path.exists(cred_path):
-        raise FileNotFoundError("serviceAccountKey.json not found in project root.")
+        raise FileNotFoundError("diems-cse-firebase-adminsdk-148re-9ffa77330c.json not found in project root.")
     cred = credentials.Certificate(cred_path)
     firebase_admin.initialize_app(cred)
     firestore_db = firestore.client()
@@ -165,7 +165,6 @@ def register_user():
 
     return render_template('register.html')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
     """
@@ -230,10 +229,18 @@ def login_page():
         session['role'] = role
 
         flash("Login successful.", "success")
-        return redirect(url_for('dashboard'))
+        # Redirect based on role
+        if role == 'admin':
+            return redirect(url_for('dashboard'))
+        elif role == 'donor':
+            return redirect(url_for('donor_dashboard'))
+        elif role == 'volunteer':
+            return redirect(url_for('volunteer_dashboard'))
+        else:
+            flash("Unknown role. Contact admin.", "danger")
+            return redirect(url_for('login_page'))
 
     return render_template('login.html')
-
 
 @app.route('/logout')
 def logout():
@@ -277,16 +284,22 @@ def donor_page():
         return redirect(url_for('dashboard'))
     return render_template('donations.html')
 
+
 @app.route('/donor-dashboard')
 def donor_dashboard():
-    if 'uid' not in session:
-        flash("Please login first.", "warning")
-        return redirect(url_for('login_page'))
-    if session.get('role') != 'donor':
+    if 'uid' not in session or session.get('role') != 'donor':
         flash("Access denied: donor only dashboard.", "danger")
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('login_page'))
     return render_template('donor_dashboard.html', username=session.get('username'))
 
+@app.route('/volunteer-dashboard')
+def volunteer_dashboard():
+    if 'uid' not in session or session.get('role') != 'volunteer':
+        flash("Access denied: volunteer only dashboard.", "danger")
+        return redirect(url_for('login_page'))
+    return render_template('volunteer_dashboard.html', username=session.get('username'))
+
+# ...existing code...
 @app.route('/api/donor/summary')
 def api_donor_summary():
     if 'uid' not in session or session.get('role') != 'donor':
@@ -384,7 +397,8 @@ def volunteer_page():
     if session.get('role') != 'volunteer':
         flash("Access denied: volunteer only page.", "danger")
         return redirect(url_for('dashboard'))
-    return render_template('activities.html')
+    return render_template('activities.html',role=session.get("role"),
+    username=session.get("username"))
 
 @app.route('/beneficiary')
 def beneficiary_page():
@@ -403,31 +417,31 @@ def beneficiary_page():
 def stakeholders_page():
     if "uid" not in session:
         return redirect(url_for('login_page'))
-    return render_template('stakeholders.html')
+    return render_template('stakeholders.html', role=session.get("role"), username=session.get("username"))
 
 @app.route('/projects')
 def projects_page():
     if "uid" not in session:
         return redirect(url_for('login_page'))
-    return render_template('projects.html')
+    return render_template('projects.html', role=session.get("role"), username=session.get("username"))
 
 @app.route('/activities')
 def activities_page():
     if "uid" not in session:
         return redirect(url_for('login_page'))
-    return render_template('activities.html')
+    return render_template('activities.html', role=session.get("role"), username=session.get("username"))
 
 @app.route('/donations')
 def donations_page():
     if "uid" not in session:
         return redirect(url_for('login_page'))
-    return render_template('donations.html')
+    return render_template('donations.html', role=session.get("role"), username=session.get("username"))
 
 @app.route('/analytics')
 def analytics_page():
     if "uid" not in session:
         return redirect(url_for('login_page'))
-    return render_template('analytics.html')
+    return render_template('analytics.html', role=session.get("role"), username=session.get("username"))
 
 
 @app.route('/api/summary')

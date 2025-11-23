@@ -118,13 +118,12 @@
     <form action="/register" method="POST">
 
         <input type="text" name="username" placeholder="Enter your name" required>
-        <input type="email" name="email" placeholder="Enter email address" required>
+        <input type="email" name="email" placeholder="Enter email address" required >
         <input type="password" name="password" placeholder="Create password" required>
 
         <div class="roles">
             <button type="button" class="role-btn" onclick="selectRole('donor', this)">Donor</button>
             <button type="button" class="role-btn" onclick="selectRole('volunteer', this)">Volunteer</button>
-            <button type="button" class="role-btn" onclick="selectRole('beneficiary', this)">Beneficiary</button>
         </div>
 
         <input type="hidden" id="roleInput" name="role" required>

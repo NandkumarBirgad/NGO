@@ -22,7 +22,7 @@ def get_mysql_connection():
     )
 
 # --------- Firebase Admin SDK Initialization ----------
-cred = credentials.Certificate("serviceAccountKey.json")
+cred = credentials.Certificate("diems-cse-firebase-adminsdk-148re-9ffa77330c.json")
 firebase_admin.initialize_app(cred)
 
 # Firestore DB (For storing user roles)
